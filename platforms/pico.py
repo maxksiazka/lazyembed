@@ -1,6 +1,3 @@
-from ast import main
-from enum import pickle_by_global_name
-from functools import total_ordering
 import os
 import shutil
 from common import get_env_var, get_target_dir, create_directory, create_file
@@ -93,7 +90,7 @@ int main(void) {
     print(f"Created file: CMakeLists.txt with content for {board_choice}")
 
     main_chars = create_file(FILES_TO_CREATE['main.c'], main_c_content)
-    print(f"Created file: main.c")
+    print("Created file: main.c")
     
     total_chars = cmake_chars + main_chars
     print(f"\nSuccessfully set up the Raspberry Pi Pico development environment!\n{total_chars} characters written across all files.")
