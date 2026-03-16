@@ -27,5 +27,13 @@ def create_file(path: str, content: str = "") -> int:
     if expected_chars != written_chars:
         raise IOError(f"File write error: expected {expected_chars} bytes, but got {written_chars} bytes.")
 
-
     return written_chars
+
+def get_env_var(var_name: str) -> str:
+    """
+    Retrieves the value of an environment variable. If the variable is not set, it raises an error.
+    """
+    value = os.getenv(var_name)
+    if value is None:
+        raise EnvironmentError(f"Environment variable '{var_name}' is not set.")
+    return value
