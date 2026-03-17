@@ -6,7 +6,7 @@ def get_esp_target_choice() -> str:
     Polls the user for their target ESP chip and validates the input.
     """
     targets = {
-        "1": "esp32",    # The classic dual-core
+        "1": "esp32dev",    # The classic dual-core
         "2": "esp32s2",  # Single-core, USB OTG
         "3": "esp32s3",  # Dual-core, AI instructions, very popular
         "4": "esp32c3",  # RISC-V single-core
@@ -56,7 +56,7 @@ Diagnostics:
     - redefinition_different_typedef
     - main_returns_nonint
     """
-    written_chars = create_file(os.path.join(root_dir, ".clangd"))
+    written_chars = create_file(os.path.join(root_dir, ".clangd"), clangd_template)
     return written_chars
     
 def get_framework_choice() -> list[ str ]:
@@ -91,8 +91,61 @@ def generate_platformio_ini(root_dir: str, frameworks: list[str], target_chip: s
         f"platform = espressif32\n"
         f"board = {target_chip}\n"
         f"framework = {framework_str}\n"
+        "\n"
+        "build_flags = -D CORE_DEBUG_LEVEL=3"
     )
     _ = create_file(os.path.join(root_dir, "platformio.ini"), ini_content)
+
+def set_gitignore(root_dir: str):
+    gitignore_content = """
+# PlatformIO
+.pio/
+.vscode/
+*.pyc
+__pycache__/
+.env
+.DS_Store
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+
+# Compiled source #
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Arduino
+*.bin
+*.elf
+*.hex
+
+# Misc
+*.orig
+*.rej
+"""
+    return create_file(os.path.join(root_dir, ".gitignore"), gitignore_content)
 
 def setup(project_name: str) -> None:
     target_chip = get_esp_target_choice()
@@ -112,4 +165,6 @@ def setup(project_name: str) -> None:
     frameworks = get_framework_choice()
     generate_platformio_ini(root, frameworks,target_chip)
     print(f"✅ platformio.ini created with frameworks: {', '.join(frameworks)} for target chip: {target_chip}.")
+    _ = set_gitignore(root)
+    print("✅ .gitignore file created.")
 
